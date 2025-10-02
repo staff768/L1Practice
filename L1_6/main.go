@@ -10,8 +10,8 @@ import (
 )
 
 // 1) Остановка по условию (флаг)
-func demoConditionStop() {
-	fmt.Println("-- demoConditionStop")
+func ConditionStop() {
+	fmt.Println("-- ConditionStop")
 	var stopFlag atomic.Bool
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -26,15 +26,14 @@ func demoConditionStop() {
 			time.Sleep(150 * time.Millisecond)
 		}
 	}()
-	// Имитация триггера останова
 	time.Sleep(400 * time.Millisecond)
 	stopFlag.Store(true)
 	wg.Wait()
 }
 
 // 2) Остановка через канал уведомления (done)
-func demoDoneChannelStop() {
-	fmt.Println("-- demoDoneChannelStop")
+func DoneChannelStop() {
+	fmt.Println("-- DoneChannelStop")
 	done := make(chan struct{})
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -58,8 +57,8 @@ func demoDoneChannelStop() {
 }
 
 // 3) Остановка через контекст с ручной отменой
-func demoContextCancelStop() {
-	fmt.Println("-- demoContextCancelStop")
+func ContextCancelStop() {
+	fmt.Println("-- ContextCancelStop")
 	ctx, cancel := context.WithCancel(context.Background())
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -83,8 +82,8 @@ func demoContextCancelStop() {
 }
 
 // 4) Остановка через контекст с тайм-аутом/дедлайном
-func demoContextTimeoutStop() {
-	fmt.Println("-- demoContextTimeoutStop")
+func ContextTimeoutStop() {
+	fmt.Println("-- ContextTimeoutStop")
 	ctx, cancel := context.WithTimeout(context.Background(), 350*time.Millisecond)
 	defer cancel()
 	var wg sync.WaitGroup
@@ -106,8 +105,8 @@ func demoContextTimeoutStop() {
 }
 
 // 5) Остановка чтением закрытого рабочего канала
-func demoCloseWorkChannelStop() {
-	fmt.Println("-- demoCloseWorkChannelStop")
+func CloseWorkChannelStop() {
+	fmt.Println("-- CloseWorkChannelStop")
 	work := make(chan int)
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -131,8 +130,8 @@ func demoCloseWorkChannelStop() {
 }
 
 // 6) Принудительное завершение текущей горутины runtime.Goexit()
-func demoRuntimeGoexitStop() {
-	fmt.Println("-- demoRuntimeGoexitStop")
+func RuntimeGoexitStop() {
+	fmt.Println("-- RuntimeGoexitStop")
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
@@ -140,17 +139,16 @@ func demoRuntimeGoexitStop() {
 		fmt.Println("goroutine: doing some work")
 		time.Sleep(100 * time.Millisecond)
 		fmt.Println("goroutine: calling runtime.Goexit()")
-		runtime.Goexit() // немедленно завершает текущую горутину, выполняя defers
-		// этот код не будет выполнен
+		runtime.Goexit()
 	}()
 	wg.Wait()
 }
 
 func main() {
-	demoConditionStop()
-	demoDoneChannelStop()
-	demoContextCancelStop()
-	demoContextTimeoutStop()
-	demoCloseWorkChannelStop()
-	demoRuntimeGoexitStop()
+	ConditionStop()
+	DoneChannelStop()
+	ContextCancelStop()
+	ContextTimeoutStop()
+	CloseWorkChannelStop()
+	RuntimeGoexitStop()
 }
